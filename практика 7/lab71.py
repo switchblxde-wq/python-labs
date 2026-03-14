@@ -8,7 +8,7 @@ def filter_by_type(items, data_type):
     if data_type not in allowed_types:
         raise TypeError(f"data_type must be one of {allowed_types}, got {data_type}")
 
-    # Проверка на элементы неразрешённых типов (для предупреждения)
+    # сохраняем значение в переменную
     other_types = [item for item in items if not isinstance(item, allowed_types)]
     if other_types:
         warnings.warn(
@@ -17,5 +17,5 @@ def filter_by_type(items, data_type):
             UserWarning
         )
 
-    # Строгая фильтрация по точному типу (чтобы отделить bool от int)
+    # возвращаем результат
     return [item for item in items if type(item) is data_type]

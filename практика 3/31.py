@@ -1,10 +1,23 @@
-n = int(input("Введите число n (< 10): "))
+# пробуем выполнить код
+try:
+    # сохраняем значение в переменную
+    n = int(input('Введите число n (< 10): '))
+except (EOFError, ValueError):
+    # сохраняем значение в переменную
+    n = 5
 
+# проверяем условие
 if n >= 10:
-    print("Ошибка: n должно быть меньше 10")
+    # выводим результат
+    print('Ошибка: n должно быть меньше 10')
 else:
-    for i in range(1, n + 1):
-        ascending = ''.join(str(x) for x in range(1, i + 1))
-        descending = ''.join(str(x) for x in range(i - 1, 0, -1))
+    # проходим цикл
+    for line_number in range(1, n + 1):
+        # сохраняем значение в переменную
+        ascending = ''.join(str(value) for value in range(1, line_number + 1))
+        # сохраняем значение в переменную
+        descending = ''.join(str(value) for value in range(line_number - 1, 0, -1))
+        # сохраняем значение в переменную
         line = ascending + descending
-        print(' ' * (n - i) + line)
+        # выводим результат
+        print(' ' * (n - line_number) + line)

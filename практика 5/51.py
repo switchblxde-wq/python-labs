@@ -1,98 +1,158 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from pathlib import Path
-
-def read_csv_auto(filepath, nrows=None):
-    for sep in [',', ';', '\t', '|', ' ']:
-        try:
-            df = pd.read_csv(filepath, sep=sep, nrows=10)
-            if df.shape[1] > 1:
-                return pd.read_csv(filepath, sep=sep, nrows=nrows)
-        except:
-            continue
-    return pd.read_csv(filepath, sep=None, engine='python', nrows=nrows)
+# подключаем модуль
+import csv
 
 
-data_dir = Path('data')
-print("Файлы в папке data:", [f.name for f in data_dir.glob('*')])
+# описываем функцию
+
+def read_csv(path, limit=None):
+    # сохраняем значение в переменную
+    rows = []
+    # открываем файл
+    with open(path, 'r', encoding='utf-8') as file:
+        # сохраняем значение в переменную
+        reader = csv.DictReader(file)
+        # проходим цикл
+        for index, row in enumerate(reader):
+            # выполняем действие
+            rows.append(row)
+            # проверяем условие
+            if limit is not None and index + 1 >= limit:
+                # выполняем действие
+                break
+    # возвращаем результат
+    return rows
 
 
-tr_mcc_codes = read_csv_auto(data_dir / 'tr_mcc_codes.csv')
-tr_types = read_csv_auto(data_dir / 'tr_types.csv')
-gender_train = read_csv_auto(data_dir / 'gender_train.csv')
-transactions = read_csv_auto(data_dir / 'transactions.csv', nrows=1000000)
+# сохраняем значение в переменную
+mcc_codes = read_csv('data/tr_mcc_codes.csv')
+# сохраняем значение в переменную
+transaction_types = read_csv('data/tr_types.csv')
+# сохраняем значение в переменную
+gender_rows = read_csv('data/gender_train.csv')
 
+# пробуем выполнить код
+try:
+    # сохраняем значение в переменную
+    transactions = read_csv('data/transactions.csv', limit=100000)
+except FileNotFoundError:
+    # выводим результат
+    print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
+    # выбрасываем исключение
+    raise SystemExit(0)
 
-merged = transactions.merge(gender_train, on='customer_id', how='left')
-merged = merged.merge(tr_mcc_codes, on='mcc_code', how='inner')
-merged = merged.merge(tr_types, on='tr_type', how='inner')
+# сохраняем значение в переменную
+mcc_map = {row['mcc_code']: row for row in mcc_codes}
+# сохраняем значение в переменную
+type_map = {row['tr_type']: row for row in transaction_types}
+# сохраняем значение в переменную
+gender_map = {row['customer_id']: row.get('gender') for row in gender_rows}
 
-print(f'Количество строк после соединения: {len(merged)}')
+# сохраняем значение в переменную
+merged_rows = []
+# проходим цикл
+for row in transactions:
+    # сохраняем значение в переменную
+    customer_id = row.get('customer_id')
+    mcc_code = row.get('mcc_code')
+    tr_type = row.get('tr_type')
+    # проверяем условие
+    if mcc_code in mcc_map and tr_type in type_map and customer_id in gender_map:
+        # сохраняем значение в переменную
+        merged_row = dict(row)
+        # сохраняем значение в переменную
+        merged_row['gender'] = gender_map[customer_id]
+        # сохраняем значение в переменную
+        merged_row['mcc_description'] = mcc_map[mcc_code].get('mcc_description', '')
+        # сохраняем значение в переменную
+        merged_row['tr_description'] = type_map[tr_type].get('tr_description', '')
+        # выполняем действие
+        merged_rows.append(merged_row)
 
-positive = merged[merged['amount'] > 0].copy()
-max_income = positive.groupby(['tr_type', 'gender'])['amount'].max().reset_index()
-max_income.rename(columns={'amount': 'max_income'}, inplace=True)
+# выводим результат
+print(f'Количество строк после соединения: {len(merged_rows)}')
 
+# сохраняем значение в переменную
+positive_rows = []
+# проходим цикл
+for row in merged_rows:
+    # сохраняем значение в переменную
+    amount_value = float(row.get('amount', '0'))
+    # проверяем условие
+    if amount_value > 0:
+        # сохраняем значение в переменную
+        row_copy = dict(row)
+        # сохраняем значение в переменную
+        row_copy['amount_num'] = amount_value
+        # выполняем действие
+        positive_rows.append(row_copy)
 
-male = max_income[max_income['gender'] == 1].copy()
-female = max_income[max_income['gender'] == 0].copy()
+# сохраняем значение в переменную
+max_income_map = {}
+# проходим цикл
+for row in positive_rows:
+    # сохраняем значение в переменную
+    group_key = (row['tr_type'], row['gender'])
+    # сохраняем значение в переменную
+    amount_value = row['amount_num']
+    # проверяем условие
+    if group_key not in max_income_map or amount_value > max_income_map[group_key]:
+        # сохраняем значение в переменную
+        max_income_map[group_key] = amount_value
 
+# сохраняем значение в переменную
+male_rows = []
+# сохраняем значение в переменную
+female_rows = []
+# проходим цикл
+for (tr_type, gender), max_income in max_income_map.items():
+    # сохраняем значение в переменную
+    result_row = {'tr_type': tr_type, 'max_income': max_income}
+    # проверяем условие
+    if str(gender) == '1':
+        # выполняем действие
+        male_rows.append(result_row)
+    else:
+        # выполняем действие
+        female_rows.append(result_row)
 
-male_top5 = male.nsmallest(5, 'max_income')
-female_top5 = female.nsmallest(5, 'max_income')
+# сохраняем значение в переменную
+male_top5 = sorted(male_rows, key=lambda row: row['max_income'])[:5]
+# сохраняем значение в переменную
+female_top5 = sorted(female_rows, key=lambda row: row['max_income'])[:5]
 
+# выводим результат
+print('\n5 наименьших max_income для мужчин:')
+# проходим цикл
+for row in male_top5:
+    # выводим результат
+    print(row['tr_type'], row['max_income'])
 
-print("\n5 наименьших max_income для мужчин:")
-print(male_top5[['tr_type', 'max_income']])
+# выводим результат
+print('\n5 наименьших max_income для женщин:')
+# проходим цикл
+for row in female_top5:
+    # выводим результат
+    print(row['tr_type'], row['max_income'])
 
-print("\n5 наименьших max_income для женщин:")
-print(female_top5[['tr_type', 'max_income']])
+# сохраняем значение в переменную
+male_types = {row['tr_type'] for row in male_top5}
+# сохраняем значение в переменную
+female_types = {row['tr_type'] for row in female_top5}
+# сохраняем значение в переменную
+common_types = male_types.intersection(female_types)
 
-common_types = set(male_top5['tr_type']).intersection(set(female_top5['tr_type']))
-print("\nТипы транзакций, присутствующие в обоих списках:")
+# выводим результат
+print('\nТипы транзакций, присутствующие в обоих списках:')
+# выводим результат
 print(common_types)
 
+# проверяем условие
 if common_types:
-    common_info = tr_types[tr_types['tr_type'].isin(common_types)]
-    print("\nОписание общих типов транзакций:")
-    print(common_info[['tr_type', 'tr_description']])
-
-
-all_types = sorted(set(male_top5['tr_type']).union(set(female_top5['tr_type'])))
-plot_df = pd.DataFrame({'tr_type': all_types})
-
-
-plot_df = plot_df.merge(male_top5[['tr_type', 'max_income']], on='tr_type', how='left').rename(columns={'max_income': 'male'})
-
-plot_df = plot_df.merge(female_top5[['tr_type', 'max_income']], on='tr_type', how='left').rename(columns={'max_income': 'female'})
-
-plot_df.fillna(0, inplace=True)
-
-plot_df['total'] = plot_df['male'] + plot_df['female']
-plot_df.sort_values('total', ascending=False, inplace=True)
-
-
-fig, ax = plt.subplots(figsize=(10, 6))
-y = np.arange(len(plot_df))
-height = 0.9  
-
-
-ax.barh(y, plot_df['male'], height, label='Мужчины', color='steelblue')
-
-ax.barh(y, plot_df['female'], height, left=plot_df['male'], label='Женщины', color='lightcoral')
-
-ax.set_yticks(y)
-ax.set_yticklabels(plot_df['tr_type'])
-ax.set_xlabel('Максимальный доход (max_income)')
-ax.set_title('Составная горизонтальная диаграмма (мужчины + женщины)')
-ax.legend()
-
-for i, (male_val, female_val) in enumerate(zip(plot_df['male'], plot_df['female'])):
-    if male_val > 0:
-        ax.text(male_val / 2, i, f'{male_val:.0f}', ha='center', va='center', color='white', fontsize=8)
-    if female_val > 0:
-        ax.text(male_val + female_val / 2, i, f'{female_val:.0f}', ha='center', va='center', color='white', fontsize=8)
-
-plt.tight_layout()
-plt.show()
+    # выводим результат
+    print('\nОписание общих типов транзакций:')
+    # проходим цикл
+    for row in transaction_types:
+        # проверяем условие
+        if row['tr_type'] in common_types:
+            # выводим результат
+            print(row['tr_type'], row.get('tr_description', ''))

@@ -1,28 +1,52 @@
-import pandas as pd
+# подключаем модуль
+import csv
 
-# Загрузка transactions (только первые 1e6 строк)
-# Предположим, что файл имеет расширение .csv. Если расширение другое, укажите его явно.
-transactions = pd.read_csv('data/transactions.csv', nrows=1_000_000)
 
-# Загрузка gender_train (весь файл)
-# Если разделитель отличается от запятой, его можно указать вручную (например, sep='\t' для табуляции)
-gender_train = pd.read_csv('data/gender_train.csv')
+# описываем функцию
 
-# Если разделители неизвестны, можно прочитать несколько строк для определения:
-# with open('data/transactions.csv', 'r') as f:
-#     first_lines = [next(f) for _ in range(5)]
-#     # далее проанализировать разделители (например, по количеству запятых/табуляций)
+def read_head(path, limit=5):
+    # сохраняем значение в переменную
+    rows = []
+    # открываем файл
+    with open(path, 'r', encoding='utf-8') as file:
+        # сохраняем значение в переменную
+        reader = csv.reader(file)
+        # проходим цикл
+        for index, row in enumerate(reader):
+            # выполняем действие
+            rows.append(row)
+            # проверяем условие
+            if index + 1 >= limit:
+                # выполняем действие
+                break
+    # возвращаем результат
+    return rows
 
-# Проверка содержимого
-print("Transactions (первые 5 строк):")
-print(transactions.head())
 
-print("\nTransactions информация:")
-print(transactions.info())
+# сохраняем значение в переменную
+transactions_path = 'data/transactions.csv'
+# сохраняем значение в переменную
+gender_path = 'data/gender_train.csv'
 
-print("\nGender_train (первые 5 строк):")
-print(gender_train.head())
+# выводим результат
+print('Transactions (первые 5 строк):')
+# пробуем выполнить код
+try:
+    # сохраняем значение в переменную
+    transactions_head = read_head(transactions_path, 5)
+    # проходим цикл
+    for row in transactions_head:
+        # выводим результат
+        print(row)
+except FileNotFoundError:
+    # выводим результат
+    print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
 
-print("\nGender_train информация:")
-print(gender_train.info())
-    
+# выводим результат
+print()
+# выводим результат
+print('Gender_train (первые 5 строк):')
+# проходим цикл
+for row in read_head(gender_path, 5):
+    # выводим результат
+    print(row)

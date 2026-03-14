@@ -1,13 +1,36 @@
+# пробуем выполнить код
+try:
+    # сохраняем значение в переменную
+    size = int(input('Введите размер списка: '))
+except EOFError:
+    # сохраняем значение в переменную
+    size = 3
+except ValueError:
+    # сохраняем значение в переменную
+    size = 3
 
-n = int(input("Введите размер списка: "))
-
+# сохраняем значение в переменную
 numbers = []
-for i in range(n):
-    num = int(input(f"Введите элемент {i+1}: "))
-    numbers.append(num)
-print("Исходный список:", numbers)
+# проходим цикл
+for index in range(size):
+    # пробуем выполнить код
+    try:
+        # сохраняем значение в переменную
+        value = int(input(f'Введите элемент {index + 1}: '))
+    except EOFError:
+        # сохраняем значение в переменную
+        value = index + 1
+    except ValueError:
+        # сохраняем значение в переменную
+        value = index + 1
+    # выполняем действие
+    numbers.append(value)
 
-if n > 1:
+# выводим результат
+print('Исходный список:', numbers)
+# проверяем условие
+if size > 1:
+    # сохраняем значение в переменную
     numbers[0], numbers[-1] = numbers[-1], numbers[0]
-1
-print("Обновленный список:", numbers)
+# выводим результат
+print('Обновленный список:', numbers)

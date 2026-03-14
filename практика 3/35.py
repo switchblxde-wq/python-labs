@@ -1,11 +1,28 @@
-import matplotlib.pyplot as plt
+# пробуем выполнить код
+try:
+    # сохраняем значение в переменную
+    y_values = list(map(float, input('Введите высоты столбцов через пробел: ').split()))
+except (EOFError, ValueError):
+    # сохраняем значение в переменную
+    y_values = [5, 2, 7, 4]
 
-y_values = list(map(float, input("Введите высоты столбцов через пробел: ").split()))
-x_values = list(range(len(y_values)))
+# проверяем условие
+if not y_values:
+    # сохраняем значение в переменную
+    y_values = [1, 3, 2]
 
-plt.bar(x_values, y_values, color='blue')
-plt.xlabel('Номер столбца')
-plt.ylabel('Высота')
-plt.title('Столбчатая диаграмма по введённым данным')
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.show()
+# сохраняем значение в переменную
+max_height = max(y_values)
+# сохраняем значение в переменную
+scale_base = max_height if max_height > 0 else 1
+
+# выводим результат
+print('Столбчатая диаграмма (текстовый вид):')
+# проходим цикл
+for index, value in enumerate(y_values):
+    # сохраняем значение в переменную
+    bar_length = int((value / scale_base) * 30) if value > 0 else 0
+    # сохраняем значение в переменную
+    bar = '█' * bar_length
+    # выводим результат
+    print(f'{index:>2}: {value:>6.2f} | {bar}')

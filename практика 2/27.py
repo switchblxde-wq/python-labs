@@ -1,44 +1,97 @@
-def main():
-    B = int(input("Введите возраст B: "))
-    C = input("Введите диагноз C: ").strip().lower()
+# описываем функцию
 
-    encodings_to_try = ['utf-8']
+def main():
+    # пробуем выполнить код
+    try:
+        # сохраняем значение в переменную
+        age_border = int(input('Введите возраст B: '))
+    except (EOFError, ValueError):
+        # сохраняем значение в переменную
+        age_border = 30
+
+    # пробуем выполнить код
+    try:
+        # сохраняем значение в переменную
+        diagnosis_filter = input('Введите диагноз C: ').strip().lower()
+    except EOFError:
+        # сохраняем значение в переменную
+        diagnosis_filter = 'грипп'
+
+    # сохраняем значение в переменную
+    encodings = ['utf-8']
+    # сохраняем значение в переменную
     lines = None
-    for enc in encodings_to_try:
+
+    # проходим цикл
+    for encoding in encodings:
+        # пробуем выполнить код
         try:
-            with open('klinika.txt', 'r', encoding=enc) as f:
-                lines = f.readlines()
-            print(f"Файл успешно прочитан в кодировке {enc}")
+            # открываем файл
+            with open('klinika.txt', 'r', encoding=encoding) as file:
+                # сохраняем значение в переменную
+                lines = file.readlines()
+            # выводим результат
+            print(f'Файл успешно прочитан в кодировке {encoding}')
+            # выполняем действие
             break
         except UnicodeDecodeError:
+            # выполняем действие
             continue
 
+    # проверяем условие
     if lines is None:
-        print("Не удалось прочитать файл ни в одной из распространённых кодировок.")
+        # выводим результат
+        print('Не удалось прочитать файл ни в одной из распространённых кодировок')
+        # выполняем действие
         return
 
+    # сохраняем значение в переменную
     patients = []
+    # проходим цикл
     for line in lines:
+        # сохраняем значение в переменную
         line = line.strip()
+        # проверяем условие
         if not line:
+            # выполняем действие
             continue
+
+        # сохраняем значение в переменную
         parts = line.split()
+        # проверяем условие
         if len(parts) < 5:
+            # выполняем действие
             continue
-        surname, gender, age_str, city, diagnosis = parts
+
+        # сохраняем значение в переменную
+        surname, gender, age_text, city, diagnosis = parts
+        # пробуем выполнить код
         try:
-            age = int(age_str)
+            # сохраняем значение в переменную
+            age = int(age_text)
         except ValueError:
+            # выполняем действие
             continue
-        if age > B and diagnosis.lower() == C:
-            patients.append(f"{surname} {gender} {age} {city} {diagnosis}")
 
+        # проверяем условие
+        if age > age_border and diagnosis.lower() == diagnosis_filter:
+            # выполняем действие
+            patients.append(f'{surname} {gender} {age} {city} {diagnosis}')
+
+    # проверяем условие
     if patients:
-        print("Список пациентов старше", B, "лет с диагнозом", C + ":")
-        for p in patients:
-            print(p)
+        # выводим результат
+        print('Список пациентов старше', age_border, 'лет с диагнозом', diagnosis_filter + ':')
+        # проходим цикл
+        for patient in patients:
+            # выводим результат
+            print(patient)
     else:
-        print("Пациентов, удовлетворяющих условию, не найдено.")
+        # выводим результат
+        print('Пациентов, удовлетворяющих условию, не найдено')
 
-if __name__ == "__main__":
+
+# проверяем прямой запуск файла
+if __name__ == '__main__':
+    # выполняем действие
     main()
