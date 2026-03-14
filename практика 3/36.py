@@ -1,17 +1,31 @@
-import numpy as np
-import matplotlib.pyplot as plt
+# import math module
+import math
 
-x = np.linspace(-3*np.pi, 3*np.pi, 1000, endpoint=True)
-y = np.where(x == 0, np.nan, (np.sin(3*x) * np.cos(2*x)) / (3*x))
+# prepare x values from -3pi to 3pi
+x_values = []
+# define number of points
+point_count = 41
+# calculate x step
+step = (6 * math.pi) / (point_count - 1)
+# fill x list
+for index in range(point_count):
+    # append next x value
+    x_values.append(-3 * math.pi + index * step)
 
-plt.plot(x, y, color='green', linewidth=2)
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title('График функции y = (sin(3x)*cos(2x))/(3x)')
-plt.grid(True, linestyle='--', alpha=0.7)
-
-ticks = np.arange(-3, 4) * np.pi 
-labels = [f'{int(t/np.pi)}π' if t != 0 else '0' for t in ticks]
-plt.xticks(ticks, labels)
-
-plt.show()
+# print table header
+print('Таблица для y = (sin(3x)*cos(2x))/(3x):')
+# print columns title
+print('x'.rjust(12), 'y'.rjust(14))
+# print rows
+for x_value in x_values:
+    # check zero case
+    if abs(x_value) < 1e-12:
+        # set text for undefined value
+        y_text = 'не определено'
+    else:
+        # calculate y by formula
+        y_value = (math.sin(3 * x_value) * math.cos(2 * x_value)) / (3 * x_value)
+        # format y text
+        y_text = f'{y_value: .6f}'
+    # print one table row
+    print(f'{x_value: .6f}'.rjust(12), y_text.rjust(14))
