@@ -1,45 +1,45 @@
-# class for simple movie storage
+# комментарий
 class MovieLibrary:
-    # create empty movies list
+    # комментарий
     def __init__(self):
-        # store movie records here
+        # комментарий
         self.movies = []
 
-    # add movie after validation
+    # комментарий
     def add_movie(self, title, director, year):
-        # validate title field
+        # комментарий
         if not isinstance(title, str) or not title:
-            # raise invalid title error
+            # комментарий
             raise ValueError('Title must be a non-empty string')
-        # validate director field
+        # комментарий
         if not isinstance(director, str) or not director:
-            # raise invalid director error
+            # комментарий
             raise ValueError('Director must be a non-empty string')
-        # validate year field
+        # комментарий
         if not isinstance(year, int) or year < 1888:
-            # raise invalid year error
+            # комментарий
             raise ValueError('Year must be an integer >= 1888')
-        # append movie row
+        # комментарий
         self.movies.append({'title': title, 'director': director, 'year': year})
 
-    # remove movie by title
+    # комментарий
     def remove_movie(self, title):
-        # iterate over movie list
+        # комментарий
         for index, movie in enumerate(self.movies):
-            # compare current title
+            # комментарий
             if movie['title'] == title:
-                # remove found movie
+                # комментарий
                 del self.movies[index]
-                # finish method
+                # комментарий
                 return
-        # raise error when movie is missing
+        # комментарий
         raise KeyError(f"Movie with title '{title}' not found")
 
-    # return movies for selected year
+    # комментарий
     def get_movies_by_year(self, year):
-        # validate year type
+        # комментарий
         if not isinstance(year, int):
-            # raise invalid year type error
+            # комментарий
             raise TypeError('Year must be an integer')
-        # return filtered rows
+        # комментарий
         return [movie for movie in self.movies if movie['year'] == year]

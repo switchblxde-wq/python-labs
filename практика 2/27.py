@@ -1,97 +1,97 @@
-# main function for task
+# комментарий
 
 def main():
-    # try to read age border
+    # комментарий
     try:
-        # read age border value
+        # комментарий
         age_border = int(input('Введите возраст B: '))
     except (EOFError, ValueError):
-        # use default age border
+        # комментарий
         age_border = 30
 
-    # try to read diagnosis
+    # комментарий
     try:
-        # read diagnosis text
+        # комментарий
         diagnosis_filter = input('Введите диагноз C: ').strip().lower()
     except EOFError:
-        # use default diagnosis
+        # комментарий
         diagnosis_filter = 'грипп'
 
-    # list of encodings to try
+    # комментарий
     encodings = ['utf-8']
-    # storage for file lines
+    # комментарий
     lines = None
 
-    # try each encoding
+    # комментарий
     for encoding in encodings:
-        # open file and read lines
+        # комментарий
         try:
-            # read all file lines
+            # комментарий
             with open('klinika.txt', 'r', encoding=encoding) as file:
-                # save lines
+                # комментарий
                 lines = file.readlines()
-            # print success message
+            # комментарий
             print(f'Файл успешно прочитан в кодировке {encoding}')
-            # break after success
+            # комментарий
             break
         except UnicodeDecodeError:
-            # continue with next encoding
+            # комментарий
             continue
 
-    # stop when file was not read
+    # комментарий
     if lines is None:
-        # print error message
+        # комментарий
         print('Не удалось прочитать файл ни в одной из распространённых кодировок')
-        # exit function
+        # комментарий
         return
 
-    # result list for filtered patients
+    # комментарий
     patients = []
-    # process each line
+    # комментарий
     for line in lines:
-        # strip spaces
+        # комментарий
         line = line.strip()
-        # skip empty line
+        # комментарий
         if not line:
-            # continue loop
+            # комментарий
             continue
 
-        # split line into parts
+        # комментарий
         parts = line.split()
-        # skip broken rows
+        # комментарий
         if len(parts) < 5:
-            # continue loop
+            # комментарий
             continue
 
-        # unpack parts
+        # комментарий
         surname, gender, age_text, city, diagnosis = parts
-        # parse age to int
+        # комментарий
         try:
-            # convert text to int
+            # комментарий
             age = int(age_text)
         except ValueError:
-            # skip invalid row
+            # комментарий
             continue
 
-        # check filter condition
+        # комментарий
         if age > age_border and diagnosis.lower() == diagnosis_filter:
-            # append matching patient
+            # комментарий
             patients.append(f'{surname} {gender} {age} {city} {diagnosis}')
 
-    # print results when found
+    # комментарий
     if patients:
-        # print header line
+        # комментарий
         print('Список пациентов старше', age_border, 'лет с диагнозом', diagnosis_filter + ':')
-        # print each patient
+        # комментарий
         for patient in patients:
-            # print one patient row
+            # комментарий
             print(patient)
     else:
-        # print empty result message
+        # комментарий
         print('Пациентов, удовлетворяющих условию, не найдено')
 
 
-# start main on direct run
+# комментарий
 if __name__ == '__main__':
-    # call main function
+    # комментарий
     main()

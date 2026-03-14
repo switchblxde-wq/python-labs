@@ -1,51 +1,51 @@
-# import random for generated matrices
+# комментарий
 import random
 
-# import pytest for test execution
+# комментарий
 import pytest
 
-# create random square matrix
+# комментарий
 
 def random_matrix(size):
-    # return matrix with values from -3 to 3
+    # комментарий
     return [[random.randint(-3, 3) for _ in range(size)] for _ in range(size)]
 
 
-# multiply two square matrices
+# комментарий
 
 def multiply_matrices(left_matrix, right_matrix):
-    # get matrix size
+    # комментарий
     size = len(left_matrix)
-    # create zero matrix for result
+    # комментарий
     result_matrix = [[0 for _ in range(size)] for _ in range(size)]
-    # loop over rows
+    # комментарий
     for row_index in range(size):
-        # loop over columns
+        # комментарий
         for col_index in range(size):
-            # calculate cell value
+            # комментарий
             for inner_index in range(size):
-                # add one multiplication part
+                # комментарий
                 result_matrix[row_index][col_index] += left_matrix[row_index][inner_index] * right_matrix[inner_index][col_index]
-    # return calculated matrix
+    # комментарий
     return result_matrix
 
 
-# check property for variant 5 where a*b is not always equal to b*a
+# комментарий
 @pytest.mark.parametrize('size', [2, 3, 4])
 def test_matrices_are_not_commutative_in_general(size):
-    # make several attempts to find pair with different products
+    # комментарий
     for _ in range(200):
-        # generate first matrix
+        # комментарий
         matrix_a = random_matrix(size)
-        # generate second matrix
+        # комментарий
         matrix_b = random_matrix(size)
-        # calculate a*b
+        # комментарий
         ab_product = multiply_matrices(matrix_a, matrix_b)
-        # calculate b*a
+        # комментарий
         ba_product = multiply_matrices(matrix_b, matrix_a)
-        # finish test when products are different
+        # комментарий
         if ab_product != ba_product:
-            # leave test as passed
+            # комментарий
             return
-    # fail if no pair found
+    # комментарий
     pytest.fail('could not find example where a*b is not equal to b*a')

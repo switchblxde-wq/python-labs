@@ -1,23 +1,23 @@
-# try to read n from user
+# комментарий
 try:
-    # read n value
+    # комментарий
     n = int(input('Введите число n (< 10): '))
 except (EOFError, ValueError):
-    # use default n
+    # комментарий
     n = 5
 
-# validate n range
+# комментарий
 if n >= 10:
-    # print validation message
+    # комментарий
     print('Ошибка: n должно быть меньше 10')
 else:
-    # print each pyramid line
+    # комментарий
     for line_number in range(1, n + 1):
-        # build ascending part
+        # комментарий
         ascending = ''.join(str(value) for value in range(1, line_number + 1))
-        # build descending part
+        # комментарий
         descending = ''.join(str(value) for value in range(line_number - 1, 0, -1))
-        # join parts
+        # комментарий
         line = ascending + descending
-        # print shifted line
+        # комментарий
         print(' ' * (n - line_number) + line)

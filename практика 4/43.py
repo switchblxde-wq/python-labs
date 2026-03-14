@@ -1,66 +1,66 @@
-# import csv module
+# комментарий
 import csv
 
-# set transactions path
+# комментарий
 transactions_path = 'data/transactions.csv'
 
-# read and process file
+# комментарий
 try:
-    # open transactions file
+    # комментарий
     with open(transactions_path, 'r', encoding='utf-8') as file:
-        # create dict reader
+        # комментарий
         reader = csv.DictReader(file)
-        # create amounts map by customer
+        # комментарий
         amounts_by_customer = {}
-        # loop through rows
+        # комментарий
         for row in reader:
-            # read customer id
+            # комментарий
             customer_id = row.get('customer_id')
-            # read amount text
+            # комментарий
             amount_text = row.get('amount', '0')
-            # parse amount
+            # комментарий
             amount_value = float(amount_text)
-            # append amount to customer list
+            # комментарий
             amounts_by_customer.setdefault(customer_id, []).append(amount_value)
 
-    # prepare min search vars
+    # комментарий
     min_customer_id = None
-    # set min amount placeholder
+    # комментарий
     min_amount_value = None
 
-    # find customer with minimal transaction
+    # комментарий
     for customer_id, amounts in amounts_by_customer.items():
-        # find current customer minimum
+        # комментарий
         current_min_amount = min(amounts)
-        # update global minimum
+        # комментарий
         if min_amount_value is None or current_min_amount < min_amount_value:
-            # store new min value
+            # комментарий
             min_amount_value = current_min_amount
-            # store customer id
+            # комментарий
             min_customer_id = customer_id
 
-    # get amounts for selected customer
+    # комментарий
     selected_amounts = amounts_by_customer[min_customer_id]
-    # calculate absolute values
+    # комментарий
     abs_amounts = [abs(value) for value in selected_amounts]
 
-    # count frequencies for abs values
+    # комментарий
     frequency = {}
-    # loop over abs values
+    # комментарий
     for abs_value in abs_amounts:
-        # update counter
+        # комментарий
         frequency[abs_value] = frequency.get(abs_value, 0) + 1
 
-    # find most common abs value
+    # комментарий
     most_common_abs = max(frequency, key=frequency.get)
-    # get occurrence count
+    # комментарий
     repeat_count = frequency[most_common_abs]
 
-    # print result value
+    # комментарий
     print(f'Наиболее часто встречающийся модуль суммы: {most_common_abs}')
-    # print result count
+    # комментарий
     print(f'Количество повторений: {repeat_count}')
 
 except FileNotFoundError:
-    # print message when file is archived
+    # комментарий
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')

@@ -1,52 +1,52 @@
-# import csv module
+# комментарий
 import csv
 
 
-# read first lines from csv file
+# комментарий
 
 def read_head(path, limit=5):
-    # create result rows container
+    # комментарий
     rows = []
-    # open file in utf-8
+    # комментарий
     with open(path, 'r', encoding='utf-8') as file:
-        # create csv reader
+        # комментарий
         reader = csv.reader(file)
-        # read rows up to limit
+        # комментарий
         for index, row in enumerate(reader):
-            # append row
+            # комментарий
             rows.append(row)
-            # stop on limit
+            # комментарий
             if index + 1 >= limit:
-                # break loop
+                # комментарий
                 break
-    # return rows
+    # комментарий
     return rows
 
 
-# set data paths
+# комментарий
 transactions_path = 'data/transactions.csv'
-# set gender file path
+# комментарий
 gender_path = 'data/gender_train.csv'
 
-# print transactions section
+# комментарий
 print('Transactions (первые 5 строк):')
-# read transactions head with safe fallback
+# комментарий
 try:
-    # get first rows from transactions
+    # комментарий
     transactions_head = read_head(transactions_path, 5)
-    # print transactions rows
+    # комментарий
     for row in transactions_head:
-        # print one row
+        # комментарий
         print(row)
 except FileNotFoundError:
-    # print message when file is archived
+    # комментарий
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
 
-# print empty line
+# комментарий
 print()
-# print gender section
+# комментарий
 print('Gender_train (первые 5 строк):')
-# print first rows from gender file
+# комментарий
 for row in read_head(gender_path, 5):
-    # print one row
+    # комментарий
     print(row)

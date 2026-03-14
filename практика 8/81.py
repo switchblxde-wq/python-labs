@@ -1,9 +1,9 @@
-# import doctest for running examples from docstring
+# комментарий
 import doctest
 
-# create counter class for variant 5
+# комментарий
 class Counter:
-    # describe class and examples for checks
+    # комментарий
     """
     simple counter with increment and decrement
 
@@ -21,27 +21,27 @@ class Counter:
     -1
     """
 
-    # set start value
+    # комментарий
     def __init__(self):
-        # store current value
+        # комментарий
         self.value = 0
 
-    # increase value by one
+    # комментарий
     def increment(self):
-        # update value
+        # комментарий
         self.value += 1
 
-    # decrease value by one
+    # комментарий
     def decrement(self):
-        # update value
+        # комментарий
         self.value -= 1
 
-    # return current value
+    # комментарий
     def get_value(self):
-        # give saved value
+        # комментарий
         return self.value
 
-# run doctest from main for odd variant
+# комментарий
 if __name__ == '__main__':
-    # start doctest with verbose output
+    # комментарий
     doctest.testmod(verbose=True)

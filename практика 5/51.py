@@ -1,158 +1,158 @@
-# import csv module
+# комментарий
 import csv
 
 
-# read csv into list of dict rows
+# комментарий
 
 def read_csv(path, limit=None):
-    # create rows container
+    # комментарий
     rows = []
-    # open file with utf-8
+    # комментарий
     with open(path, 'r', encoding='utf-8') as file:
-        # create dict reader
+        # комментарий
         reader = csv.DictReader(file)
-        # read rows with optional limit
+        # комментарий
         for index, row in enumerate(reader):
-            # append row
+            # комментарий
             rows.append(row)
-            # break on limit
+            # комментарий
             if limit is not None and index + 1 >= limit:
-                # stop reading
+                # комментарий
                 break
-    # return rows
+    # комментарий
     return rows
 
 
-# load reference files
+# комментарий
 mcc_codes = read_csv('data/tr_mcc_codes.csv')
-# load transaction types
+# комментарий
 transaction_types = read_csv('data/tr_types.csv')
-# load gender info
+# комментарий
 gender_rows = read_csv('data/gender_train.csv')
 
-# load transactions with fallback for archive
+# комментарий
 try:
-    # read first 100000 rows
+    # комментарий
     transactions = read_csv('data/transactions.csv', limit=100000)
 except FileNotFoundError:
-    # print info about archived file
+    # комментарий
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
-    # finish script without error
+    # комментарий
     raise SystemExit(0)
 
-# build lookup maps
+# комментарий
 mcc_map = {row['mcc_code']: row for row in mcc_codes}
-# build type lookup map
+# комментарий
 type_map = {row['tr_type']: row for row in transaction_types}
-# build customer gender map
+# комментарий
 gender_map = {row['customer_id']: row.get('gender') for row in gender_rows}
 
-# merge rows from all tables
+# комментарий
 merged_rows = []
-# loop through transactions
+# комментарий
 for row in transactions:
-    # get keys for merge
+    # комментарий
     customer_id = row.get('customer_id')
     mcc_code = row.get('mcc_code')
     tr_type = row.get('tr_type')
-    # keep only rows with all keys available
+    # комментарий
     if mcc_code in mcc_map and tr_type in type_map and customer_id in gender_map:
-        # create merged row copy
+        # комментарий
         merged_row = dict(row)
-        # set customer gender
+        # комментарий
         merged_row['gender'] = gender_map[customer_id]
-        # set mcc description
+        # комментарий
         merged_row['mcc_description'] = mcc_map[mcc_code].get('mcc_description', '')
-        # set type description
+        # комментарий
         merged_row['tr_description'] = type_map[tr_type].get('tr_description', '')
-        # append merged row
+        # комментарий
         merged_rows.append(merged_row)
 
-# print merged row count
+# комментарий
 print(f'Количество строк после соединения: {len(merged_rows)}')
 
-# keep positive amount rows
+# комментарий
 positive_rows = []
-# loop through merged rows
+# комментарий
 for row in merged_rows:
-    # parse amount to float
+    # комментарий
     amount_value = float(row.get('amount', '0'))
-    # append only positive amounts
+    # комментарий
     if amount_value > 0:
-        # create row copy
+        # комментарий
         row_copy = dict(row)
-        # add numeric amount
+        # комментарий
         row_copy['amount_num'] = amount_value
-        # append row
+        # комментарий
         positive_rows.append(row_copy)
 
-# find max income by pair tr_type and gender
+# комментарий
 max_income_map = {}
-# iterate positive rows
+# комментарий
 for row in positive_rows:
-    # create group key
+    # комментарий
     group_key = (row['tr_type'], row['gender'])
-    # get amount value
+    # комментарий
     amount_value = row['amount_num']
-    # update group maximum
+    # комментарий
     if group_key not in max_income_map or amount_value > max_income_map[group_key]:
-        # save new max
+        # комментарий
         max_income_map[group_key] = amount_value
 
-# split rows by gender
+# комментарий
 male_rows = []
-# container for female rows
+# комментарий
 female_rows = []
-# transform map to list rows
+# комментарий
 for (tr_type, gender), max_income in max_income_map.items():
-    # build output row
+    # комментарий
     result_row = {'tr_type': tr_type, 'max_income': max_income}
-    # append by gender
+    # комментарий
     if str(gender) == '1':
-        # append to male list
+        # комментарий
         male_rows.append(result_row)
     else:
-        # append to female list
+        # комментарий
         female_rows.append(result_row)
 
-# get five smallest for each gender
+# комментарий
 male_top5 = sorted(male_rows, key=lambda row: row['max_income'])[:5]
-# get female top5
+# комментарий
 female_top5 = sorted(female_rows, key=lambda row: row['max_income'])[:5]
 
-# print male section
+# комментарий
 print('\n5 наименьших max_income для мужчин:')
-# print male rows
+# комментарий
 for row in male_top5:
-    # print one male row
+    # комментарий
     print(row['tr_type'], row['max_income'])
 
-# print female section
+# комментарий
 print('\n5 наименьших max_income для женщин:')
-# print female rows
+# комментарий
 for row in female_top5:
-    # print one female row
+    # комментарий
     print(row['tr_type'], row['max_income'])
 
-# find common transaction types
+# комментарий
 male_types = {row['tr_type'] for row in male_top5}
-# build female set
+# комментарий
 female_types = {row['tr_type'] for row in female_top5}
-# find intersection
+# комментарий
 common_types = male_types.intersection(female_types)
 
-# print common types
+# комментарий
 print('\nТипы транзакций, присутствующие в обоих списках:')
-# print type set
+# комментарий
 print(common_types)
 
-# print descriptions for common types
+# комментарий
 if common_types:
-    # print header
+    # комментарий
     print('\nОписание общих типов транзакций:')
-    # loop through type dictionary
+    # комментарий
     for row in transaction_types:
-        # print only intersected types
+        # комментарий
         if row['tr_type'] in common_types:
-            # print type and description
+            # комментарий
             print(row['tr_type'], row.get('tr_description', ''))

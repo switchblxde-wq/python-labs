@@ -1,32 +1,32 @@
-# import warnings module
+# комментарий
 import warnings
 
 
-# filter list items by exact type
+# комментарий
 
 def filter_by_type(items, data_type):
-    # validate first argument as list
+    # комментарий
     if not isinstance(items, list):
-        # raise error for invalid first argument
+        # комментарий
         raise TypeError('First argument must be a list')
 
-    # define allowed types
+    # комментарий
     allowed_types = (int, str, float, bool)
-    # validate requested type
+    # комментарий
     if data_type not in allowed_types:
-        # raise error for unsupported type
+        # комментарий
         raise TypeError(f'data_type must be one of {allowed_types}, got {data_type}')
 
-    # collect unsupported item types
+    # комментарий
     other_types = [item for item in items if not isinstance(item, allowed_types)]
-    # emit warning if unsupported items were found
+    # комментарий
     if other_types:
-        # show warning text
+        # комментарий
         warnings.warn(
             f'List contains elements of types other than int, str, float, bool: {other_types}. '
             'They will be ignored in filtering.',
             UserWarning
         )
 
-    # return only exact type matches
+    # комментарий
     return [item for item in items if type(item) is data_type]

@@ -1,28 +1,28 @@
-# try to read bar values from user
+# комментарий
 try:
-    # parse input values as float list
+    # комментарий
     y_values = list(map(float, input('Введите высоты столбцов через пробел: ').split()))
 except (EOFError, ValueError):
-    # use default values
+    # комментарий
     y_values = [5, 2, 7, 4]
 
-# replace empty list with defaults
+# комментарий
 if not y_values:
-    # set minimal defaults
+    # комментарий
     y_values = [1, 3, 2]
 
-# get max value for scaling
+# комментарий
 max_height = max(y_values)
-# avoid division by zero
+# комментарий
 scale_base = max_height if max_height > 0 else 1
 
-# print chart title
+# комментарий
 print('Столбчатая диаграмма (текстовый вид):')
-# print each bar line
+# комментарий
 for index, value in enumerate(y_values):
-    # compute bar length
+    # комментарий
     bar_length = int((value / scale_base) * 30) if value > 0 else 0
-    # create bar string
+    # комментарий
     bar = '█' * bar_length
-    # print one chart row
+    # комментарий
     print(f'{index:>2}: {value:>6.2f} | {bar}')

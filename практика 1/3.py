@@ -1,36 +1,36 @@
-# try to get list size from user
+# комментарий
 try:
-    # read list size
+    # комментарий
     size = int(input('Введите размер списка: '))
 except EOFError:
-    # use default size when input is closed
+    # комментарий
     size = 3
 except ValueError:
-    # use default size when value is invalid
+    # комментарий
     size = 3
 
-# create empty list
+# комментарий
 numbers = []
-# loop by list size
+# комментарий
 for index in range(size):
-    # try to read next element
+    # комментарий
     try:
-        # read integer value
+        # комментарий
         value = int(input(f'Введите элемент {index + 1}: '))
     except EOFError:
-        # use generated value when input is closed
+        # комментарий
         value = index + 1
     except ValueError:
-        # use generated value when input is invalid
+        # комментарий
         value = index + 1
-    # append value to list
+    # комментарий
     numbers.append(value)
 
-# print original list
+# комментарий
 print('Исходный список:', numbers)
-# swap first and last items when list has more than one item
+# комментарий
 if size > 1:
-    # do swap
+    # комментарий
     numbers[0], numbers[-1] = numbers[-1], numbers[0]
-# print updated list
+# комментарий
 print('Обновленный список:', numbers)
