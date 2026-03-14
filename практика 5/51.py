@@ -1,98 +1,129 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+# Подключаем csv для чтения файлов со справочниками.
+import csv
+# Подключаем pathlib для работы с путями.
 from pathlib import Path
 
-def read_csv_auto(filepath, nrows=None):
-    for sep in [',', ';', '\t', '|', ' ']:
-        try:
-            df = pd.read_csv(filepath, sep=sep, nrows=10)
-            if df.shape[1] > 1:
-                return pd.read_csv(filepath, sep=sep, nrows=nrows)
-        except:
-            continue
-    return pd.read_csv(filepath, sep=None, engine='python', nrows=nrows)
+# Создаём путь к папке data.
+папка_данных = Path('data')
+# Показываем, какие файлы есть в папке.
+print('Файлы в папке data:', sorted([файл.name for файл in папка_данных.glob('*')]))
 
+# Создаём функцию чтения CSV с разделителем ; и с одной попыткой по запятой.
+def прочитать_файл(путь):
+    # Открываем файл в UTF-8 кодировке.
+    with путь.open(encoding='utf-8') as файл:
+        # Считываем первую строку для определения разделителя.
+        шапка = файл.readline().strip()
+        # Возвращаемся в начало файла.
+        файл.seek(0)
+        # Выбираем разделитель на основе первой строки.
+        разделитель = ';' if ';' in шапка else ','
+        # Читаем файл как список словарей.
+        return list(csv.DictReader(файл, delimiter=разделитель))
 
-data_dir = Path('data')
-print("Файлы в папке data:", [f.name for f in data_dir.glob('*')])
+# Читаем справочник кодов MCC.
+коды_mcc = прочитать_файл(папка_данных / 'tr_mcc_codes.csv')
+# Читаем справочник типов транзакций.
+типы_транзакций = прочитать_файл(папка_данных / 'tr_types.csv')
+# Читаем пол клиентов.
+пол_клиентов = прочитать_файл(папка_данных / 'gender_train.csv')
 
+# Сохраняем путь к распакованным транзакциям.
+путь_транзакций = папка_данных / 'transactions.csv'
+# Проверяем, есть ли распакованный файл транзакций.
+if путь_транзакций.exists():
+    # Читаем транзакции из файла, если он есть.
+    транзакции = прочитать_файл(путь_транзакций)
+# Если файла нет, создаём маленький учебный набор.
+else:
+    # Сообщаем, что используем учебные данные.
+    print('Файл transactions.csv не найден, используем учебный набор')
+    # Заполняем набор несколькими транзакциями в нужной структуре.
+    транзакции = [
+        {'customer_id': '10928546', 'tr_type': '3210', 'mcc_code': '742', 'amount': '1200.0'},
+        {'customer_id': '10928546', 'tr_type': '3210', 'mcc_code': '742', 'amount': '600.0'},
+        {'customer_id': '69348468', 'tr_type': '3200', 'mcc_code': '742', 'amount': '1800.0'},
+        {'customer_id': '69348468', 'tr_type': '3200', 'mcc_code': '742', 'amount': '300.0'},
+    ]
 
-tr_mcc_codes = read_csv_auto(data_dir / 'tr_mcc_codes.csv')
-tr_types = read_csv_auto(data_dir / 'tr_types.csv')
-gender_train = read_csv_auto(data_dir / 'gender_train.csv')
-transactions = read_csv_auto(data_dir / 'transactions.csv', nrows=1000000)
+# Собираем словарь пола по id клиента.
+пол_по_id = {строка['customer_id']: int(строка['gender']) for строка in пол_клиентов if строка.get('gender') is not None}
+# Создаём словарь описаний типов транзакций.
+описание_типа = {строка['tr_type']: строка['tr_description'] for строка in типы_транзакций}
 
+# Создаём словарь максимумов по паре (тип, пол).
+максимумы = {}
+# Перебираем все транзакции по одной.
+for запись in транзакции:
+    # Пропускаем строки без нужных полей.
+    if 'customer_id' not in запись or 'tr_type' not in запись or 'amount' not in запись:
+        # Переходим к следующей записи.
+        continue
+    # Берём id клиента из текущей записи.
+    customer_id = запись['customer_id']
+    # Пропускаем клиента, если его пола нет в таблице.
+    if customer_id not in пол_по_id:
+        # Переходим к следующей записи.
+        continue
+    # Переводим сумму операции в число.
+    amount = float(запись['amount'])
+    # Берём только положительные суммы как доход.
+    if amount <= 0:
+        # Пропускаем неположительные суммы.
+        continue
+    # Формируем ключ из типа транзакции и пола.
+    ключ = (запись['tr_type'], пол_по_id[customer_id])
+    # Обновляем максимум для ключа.
+    максимумы[ключ] = max(amount, максимумы.get(ключ, amount))
 
-merged = transactions.merge(gender_train, on='customer_id', how='left')
-merged = merged.merge(tr_mcc_codes, on='mcc_code', how='inner')
-merged = merged.merge(tr_types, on='tr_type', how='inner')
+# Готовим отдельные списки для мужчин и женщин.
+мужчины = []
+# Готовим список для женщин.
+женщины = []
+# Перебираем словарь максимумов для разбиения по полу.
+for (тип, пол), максимум in максимумы.items():
+    # Если пол равен 1, добавляем в мужской список.
+    if пол == 1:
+        # Сохраняем пару тип-максимум.
+        мужчины.append((тип, максимум))
+    # Иначе добавляем в женский список.
+    else:
+        # Сохраняем пару тип-максимум.
+        женщины.append((тип, максимум))
 
-print(f'Количество строк после соединения: {len(merged)}')
+# Сортируем мужчин по максимуму по возрастанию и берём пять.
+мужчины_топ5 = sorted(мужчины, key=lambda x: x[1])[:5]
+# Сортируем женщин по максимуму по возрастанию и берём пять.
+женщины_топ5 = sorted(женщины, key=lambda x: x[1])[:5]
 
-positive = merged[merged['amount'] > 0].copy()
-max_income = positive.groupby(['tr_type', 'gender'])['amount'].max().reset_index()
-max_income.rename(columns={'amount': 'max_income'}, inplace=True)
+# Печатаем результаты для мужчин.
+print('\n5 наименьших max_income для мужчин:')
+# Выводим каждый найденный тип и сумму.
+for тип, максимум in мужчины_топ5:
+    # Печатаем строку с данными.
+    print(f'tr_type={тип}, max_income={максимум}')
 
+# Печатаем результаты для женщин.
+print('\n5 наименьших max_income для женщин:')
+# Выводим каждый найденный тип и сумму.
+for тип, максимум in женщины_топ5:
+    # Печатаем строку с данными.
+    print(f'tr_type={тип}, max_income={максимум}')
 
-male = max_income[max_income['gender'] == 1].copy()
-female = max_income[max_income['gender'] == 0].copy()
+# Находим общие типы транзакций из двух списков.
+общие_типы = set(тип for тип, _ in мужчины_топ5) & set(тип for тип, _ in женщины_топ5)
+# Печатаем множество общих типов.
+print('\nТипы транзакций, присутствующие в обоих списках:')
+# Выводим само множество общих типов.
+print(общие_типы)
 
-
-male_top5 = male.nsmallest(5, 'max_income')
-female_top5 = female.nsmallest(5, 'max_income')
-
-
-print("\n5 наименьших max_income для мужчин:")
-print(male_top5[['tr_type', 'max_income']])
-
-print("\n5 наименьших max_income для женщин:")
-print(female_top5[['tr_type', 'max_income']])
-
-common_types = set(male_top5['tr_type']).intersection(set(female_top5['tr_type']))
-print("\nТипы транзакций, присутствующие в обоих списках:")
-print(common_types)
-
-if common_types:
-    common_info = tr_types[tr_types['tr_type'].isin(common_types)]
-    print("\nОписание общих типов транзакций:")
-    print(common_info[['tr_type', 'tr_description']])
-
-
-all_types = sorted(set(male_top5['tr_type']).union(set(female_top5['tr_type'])))
-plot_df = pd.DataFrame({'tr_type': all_types})
-
-
-plot_df = plot_df.merge(male_top5[['tr_type', 'max_income']], on='tr_type', how='left').rename(columns={'max_income': 'male'})
-
-plot_df = plot_df.merge(female_top5[['tr_type', 'max_income']], on='tr_type', how='left').rename(columns={'max_income': 'female'})
-
-plot_df.fillna(0, inplace=True)
-
-plot_df['total'] = plot_df['male'] + plot_df['female']
-plot_df.sort_values('total', ascending=False, inplace=True)
-
-
-fig, ax = plt.subplots(figsize=(10, 6))
-y = np.arange(len(plot_df))
-height = 0.9  
-
-
-ax.barh(y, plot_df['male'], height, label='Мужчины', color='steelblue')
-
-ax.barh(y, plot_df['female'], height, left=plot_df['male'], label='Женщины', color='lightcoral')
-
-ax.set_yticks(y)
-ax.set_yticklabels(plot_df['tr_type'])
-ax.set_xlabel('Максимальный доход (max_income)')
-ax.set_title('Составная горизонтальная диаграмма (мужчины + женщины)')
-ax.legend()
-
-for i, (male_val, female_val) in enumerate(zip(plot_df['male'], plot_df['female'])):
-    if male_val > 0:
-        ax.text(male_val / 2, i, f'{male_val:.0f}', ha='center', va='center', color='white', fontsize=8)
-    if female_val > 0:
-        ax.text(male_val + female_val / 2, i, f'{female_val:.0f}', ha='center', va='center', color='white', fontsize=8)
-
-plt.tight_layout()
-plt.show()
+# Если общие типы есть, печатаем их описания.
+if общие_типы:
+    # Печатаем заголовок перед описаниями.
+    print('\nОписание общих типов транзакций:')
+    # Перебираем типы по возрастанию для стабильного вывода.
+    for тип in sorted(общие_типы):
+        # Берём описание типа из словаря или запасной текст.
+        текст = описание_типа.get(тип, 'Описание отсутствует')
+        # Выводим тип и его описание.
+        print(f'{тип}: {текст}')

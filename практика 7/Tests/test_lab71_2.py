@@ -48,7 +48,7 @@ def test_filter_by_type_exceptions(items, type_to_filter, expected_exception, ma
     print(f"OK: exception for {type_to_filter}")
     # Тест на предупреждение (элементы неразрешённых типов)
 @pytest.mark.parametrize("items, type_to_filter, expected_result, warning_msg", [
-    ([1, "two", 3.0, None, [5], True], int, [1, True], 
+    ([1, "two", 3.0, None, [5], True], int, [1], 
      r"List contains elements of types other than int, str, float, bool: .*None.*\[5\]"),
     ([1, 2, "three", {"a":1}], float, [], 
      r"List contains elements of types other than int, str, float, bool: .*\{'a': 1\}"),

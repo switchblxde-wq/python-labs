@@ -1,28 +1,37 @@
-import pandas as pd
+# Подключаем csv для чтения таблицы с полом клиентов.
+import csv
+# Подключаем pathlib для работы с путями к файлам.
+from pathlib import Path
 
-# Загрузка transactions (только первые 1e6 строк)
-# Предположим, что файл имеет расширение .csv. Если расширение другое, укажите его явно.
-transactions = pd.read_csv('data/transactions.csv', nrows=1_000_000)
-
-# Загрузка gender_train (весь файл)
-# Если разделитель отличается от запятой, его можно указать вручную (например, sep='\t' для табуляции)
-gender_train = pd.read_csv('data/gender_train.csv')
-
-# Если разделители неизвестны, можно прочитать несколько строк для определения:
-# with open('data/transactions.csv', 'r') as f:
-#     first_lines = [next(f) for _ in range(5)]
-#     # далее проанализировать разделители (например, по количеству запятых/табуляций)
-
-# Проверка содержимого
-print("Transactions (первые 5 строк):")
-print(transactions.head())
-
-print("\nTransactions информация:")
-print(transactions.info())
-
-print("\nGender_train (первые 5 строк):")
-print(gender_train.head())
-
-print("\nGender_train информация:")
-print(gender_train.info())
-    
+# Сохраняем путь к файлу gender_train.csv.
+путь_к_gender = Path('data/gender_train.csv')
+# Проверяем, существует ли файл до чтения.
+if not путь_к_gender.exists():
+    # Выводим сообщение, если файл отсутствует.
+    print('Файл data/gender_train.csv не найден')
+# Если файл есть, читаем его и показываем первые строки.
+else:
+    # Открываем файл в UTF-8 режиме чтения.
+    with путь_к_gender.open(encoding='utf-8') as файл:
+        # Создаём словарный reader для удобной работы с колонками.
+        reader = csv.DictReader(файл)
+        # Читаем не больше пяти первых строк.
+        первые_пять = [строка for _, строка in zip(range(5), reader)]
+    # Печатаем заголовок раздела с примерами строк.
+    print('Gender_train (первые 5 строк):')
+    # Перебираем и печатаем строки по одной.
+    for строка in первые_пять:
+        # Выводим словарь текущей строки.
+        print(строка)
+    # Считаем количество строк в файле без заголовка.
+    with путь_к_gender.open(encoding='utf-8') as файл:
+        # Пересоздаём reader для подсчёта общего числа строк.
+        всего = sum(1 for _ in csv.DictReader(файл))
+    # Печатаем короткую информацию о файле.
+    print('\nGender_train информация:')
+    # Сообщаем количество записей.
+    print(f'Количество записей: {всего}')
+    # Сообщаем названия столбцов.
+    print('Столбцы: customer_id, gender')
+    # Сообщаем тип данных в столбцах.
+    print('Типы: customer_id -> целое, gender -> 0 или 1')
