@@ -1,12 +1,12 @@
-# комментарий
+# описываем функцию
 
 def add_numbers(first_number, second_number):
-    # комментарий
+    # возвращаем результат
     return first_number + second_number
 
 
-# комментарий
+# описываем функцию
 
 def is_even(number):
-    # комментарий
+    # возвращаем результат
     return number % 2 == 0

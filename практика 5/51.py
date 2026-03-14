@@ -1,158 +1,158 @@
-# комментарий
+# подключаем модуль
 import csv
 
 
-# комментарий
+# описываем функцию
 
 def read_csv(path, limit=None):
-    # комментарий
+    # сохраняем значение в переменную
     rows = []
-    # комментарий
+    # открываем файл
     with open(path, 'r', encoding='utf-8') as file:
-        # комментарий
+        # сохраняем значение в переменную
         reader = csv.DictReader(file)
-        # комментарий
+        # проходим цикл
         for index, row in enumerate(reader):
-            # комментарий
+            # выполняем действие
             rows.append(row)
-            # комментарий
+            # проверяем условие
             if limit is not None and index + 1 >= limit:
-                # комментарий
+                # выполняем действие
                 break
-    # комментарий
+    # возвращаем результат
     return rows
 
 
-# комментарий
+# сохраняем значение в переменную
 mcc_codes = read_csv('data/tr_mcc_codes.csv')
-# комментарий
+# сохраняем значение в переменную
 transaction_types = read_csv('data/tr_types.csv')
-# комментарий
+# сохраняем значение в переменную
 gender_rows = read_csv('data/gender_train.csv')
 
-# комментарий
+# пробуем выполнить код
 try:
-    # комментарий
+    # сохраняем значение в переменную
     transactions = read_csv('data/transactions.csv', limit=100000)
 except FileNotFoundError:
-    # комментарий
+    # выводим результат
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
-    # комментарий
+    # выбрасываем исключение
     raise SystemExit(0)
 
-# комментарий
+# сохраняем значение в переменную
 mcc_map = {row['mcc_code']: row for row in mcc_codes}
-# комментарий
+# сохраняем значение в переменную
 type_map = {row['tr_type']: row for row in transaction_types}
-# комментарий
+# сохраняем значение в переменную
 gender_map = {row['customer_id']: row.get('gender') for row in gender_rows}
 
-# комментарий
+# сохраняем значение в переменную
 merged_rows = []
-# комментарий
+# проходим цикл
 for row in transactions:
-    # комментарий
+    # сохраняем значение в переменную
     customer_id = row.get('customer_id')
     mcc_code = row.get('mcc_code')
     tr_type = row.get('tr_type')
-    # комментарий
+    # проверяем условие
     if mcc_code in mcc_map and tr_type in type_map and customer_id in gender_map:
-        # комментарий
+        # сохраняем значение в переменную
         merged_row = dict(row)
-        # комментарий
+        # сохраняем значение в переменную
         merged_row['gender'] = gender_map[customer_id]
-        # комментарий
+        # сохраняем значение в переменную
         merged_row['mcc_description'] = mcc_map[mcc_code].get('mcc_description', '')
-        # комментарий
+        # сохраняем значение в переменную
         merged_row['tr_description'] = type_map[tr_type].get('tr_description', '')
-        # комментарий
+        # выполняем действие
         merged_rows.append(merged_row)
 
-# комментарий
+# выводим результат
 print(f'Количество строк после соединения: {len(merged_rows)}')
 
-# комментарий
+# сохраняем значение в переменную
 positive_rows = []
-# комментарий
+# проходим цикл
 for row in merged_rows:
-    # комментарий
+    # сохраняем значение в переменную
     amount_value = float(row.get('amount', '0'))
-    # комментарий
+    # проверяем условие
     if amount_value > 0:
-        # комментарий
+        # сохраняем значение в переменную
         row_copy = dict(row)
-        # комментарий
+        # сохраняем значение в переменную
         row_copy['amount_num'] = amount_value
-        # комментарий
+        # выполняем действие
         positive_rows.append(row_copy)
 
-# комментарий
+# сохраняем значение в переменную
 max_income_map = {}
-# комментарий
+# проходим цикл
 for row in positive_rows:
-    # комментарий
+    # сохраняем значение в переменную
     group_key = (row['tr_type'], row['gender'])
-    # комментарий
+    # сохраняем значение в переменную
     amount_value = row['amount_num']
-    # комментарий
+    # проверяем условие
     if group_key not in max_income_map or amount_value > max_income_map[group_key]:
-        # комментарий
+        # сохраняем значение в переменную
         max_income_map[group_key] = amount_value
 
-# комментарий
+# сохраняем значение в переменную
 male_rows = []
-# комментарий
+# сохраняем значение в переменную
 female_rows = []
-# комментарий
+# проходим цикл
 for (tr_type, gender), max_income in max_income_map.items():
-    # комментарий
+    # сохраняем значение в переменную
     result_row = {'tr_type': tr_type, 'max_income': max_income}
-    # комментарий
+    # проверяем условие
     if str(gender) == '1':
-        # комментарий
+        # выполняем действие
         male_rows.append(result_row)
     else:
-        # комментарий
+        # выполняем действие
         female_rows.append(result_row)
 
-# комментарий
+# сохраняем значение в переменную
 male_top5 = sorted(male_rows, key=lambda row: row['max_income'])[:5]
-# комментарий
+# сохраняем значение в переменную
 female_top5 = sorted(female_rows, key=lambda row: row['max_income'])[:5]
 
-# комментарий
+# выводим результат
 print('\n5 наименьших max_income для мужчин:')
-# комментарий
+# проходим цикл
 for row in male_top5:
-    # комментарий
+    # выводим результат
     print(row['tr_type'], row['max_income'])
 
-# комментарий
+# выводим результат
 print('\n5 наименьших max_income для женщин:')
-# комментарий
+# проходим цикл
 for row in female_top5:
-    # комментарий
+    # выводим результат
     print(row['tr_type'], row['max_income'])
 
-# комментарий
+# сохраняем значение в переменную
 male_types = {row['tr_type'] for row in male_top5}
-# комментарий
+# сохраняем значение в переменную
 female_types = {row['tr_type'] for row in female_top5}
-# комментарий
+# сохраняем значение в переменную
 common_types = male_types.intersection(female_types)
 
-# комментарий
+# выводим результат
 print('\nТипы транзакций, присутствующие в обоих списках:')
-# комментарий
+# выводим результат
 print(common_types)
 
-# комментарий
+# проверяем условие
 if common_types:
-    # комментарий
+    # выводим результат
     print('\nОписание общих типов транзакций:')
-    # комментарий
+    # проходим цикл
     for row in transaction_types:
-        # комментарий
+        # проверяем условие
         if row['tr_type'] in common_types:
-            # комментарий
+            # выводим результат
             print(row['tr_type'], row.get('tr_description', ''))

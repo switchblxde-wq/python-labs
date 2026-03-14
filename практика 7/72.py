@@ -1,45 +1,45 @@
-# комментарий
+# описываем класс
 class MovieLibrary:
-    # комментарий
+    # описываем функцию
     def __init__(self):
-        # комментарий
+        # сохраняем значение в переменную
         self.movies = []
 
-    # комментарий
+    # описываем функцию
     def add_movie(self, title, director, year):
-        # комментарий
+        # проверяем условие
         if not isinstance(title, str) or not title:
-            # комментарий
+            # выбрасываем исключение
             raise ValueError('Title must be a non-empty string')
-        # комментарий
+        # проверяем условие
         if not isinstance(director, str) or not director:
-            # комментарий
+            # выбрасываем исключение
             raise ValueError('Director must be a non-empty string')
-        # комментарий
+        # проверяем условие
         if not isinstance(year, int) or year < 1888:
-            # комментарий
+            # выбрасываем исключение
             raise ValueError('Year must be an integer >= 1888')
-        # комментарий
+        # выполняем действие
         self.movies.append({'title': title, 'director': director, 'year': year})
 
-    # комментарий
+    # описываем функцию
     def remove_movie(self, title):
-        # комментарий
+        # проходим цикл
         for index, movie in enumerate(self.movies):
-            # комментарий
+            # проверяем условие
             if movie['title'] == title:
-                # комментарий
+                # выполняем действие
                 del self.movies[index]
-                # комментарий
+                # выполняем действие
                 return
-        # комментарий
+        # выбрасываем исключение
         raise KeyError(f"Movie with title '{title}' not found")
 
-    # комментарий
+    # описываем функцию
     def get_movies_by_year(self, year):
-        # комментарий
+        # проверяем условие
         if not isinstance(year, int):
-            # комментарий
+            # выбрасываем исключение
             raise TypeError('Year must be an integer')
-        # комментарий
+        # возвращаем результат
         return [movie for movie in self.movies if movie['year'] == year]

@@ -1,52 +1,52 @@
-# комментарий
+# подключаем модуль
 import csv
 
 
-# комментарий
+# описываем функцию
 
 def read_head(path, limit=5):
-    # комментарий
+    # сохраняем значение в переменную
     rows = []
-    # комментарий
+    # открываем файл
     with open(path, 'r', encoding='utf-8') as file:
-        # комментарий
+        # сохраняем значение в переменную
         reader = csv.reader(file)
-        # комментарий
+        # проходим цикл
         for index, row in enumerate(reader):
-            # комментарий
+            # выполняем действие
             rows.append(row)
-            # комментарий
+            # проверяем условие
             if index + 1 >= limit:
-                # комментарий
+                # выполняем действие
                 break
-    # комментарий
+    # возвращаем результат
     return rows
 
 
-# комментарий
+# сохраняем значение в переменную
 transactions_path = 'data/transactions.csv'
-# комментарий
+# сохраняем значение в переменную
 gender_path = 'data/gender_train.csv'
 
-# комментарий
+# выводим результат
 print('Transactions (первые 5 строк):')
-# комментарий
+# пробуем выполнить код
 try:
-    # комментарий
+    # сохраняем значение в переменную
     transactions_head = read_head(transactions_path, 5)
-    # комментарий
+    # проходим цикл
     for row in transactions_head:
-        # комментарий
+        # выводим результат
         print(row)
 except FileNotFoundError:
-    # комментарий
+    # выводим результат
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')
 
-# комментарий
+# выводим результат
 print()
-# комментарий
+# выводим результат
 print('Gender_train (первые 5 строк):')
-# комментарий
+# проходим цикл
 for row in read_head(gender_path, 5):
-    # комментарий
+    # выводим результат
     print(row)

@@ -1,51 +1,51 @@
-# комментарий
+# подключаем модуль
 import random
 
-# комментарий
+# подключаем модуль
 import pytest
 
-# комментарий
+# описываем функцию
 
 def random_matrix(size):
-    # комментарий
+    # возвращаем результат
     return [[random.randint(-3, 3) for _ in range(size)] for _ in range(size)]
 
 
-# комментарий
+# описываем функцию
 
 def multiply_matrices(left_matrix, right_matrix):
-    # комментарий
+    # сохраняем значение в переменную
     size = len(left_matrix)
-    # комментарий
+    # сохраняем значение в переменную
     result_matrix = [[0 for _ in range(size)] for _ in range(size)]
-    # комментарий
+    # проходим цикл
     for row_index in range(size):
-        # комментарий
+        # проходим цикл
         for col_index in range(size):
-            # комментарий
+            # проходим цикл
             for inner_index in range(size):
-                # комментарий
+                # сохраняем значение в переменную
                 result_matrix[row_index][col_index] += left_matrix[row_index][inner_index] * right_matrix[inner_index][col_index]
-    # комментарий
+    # возвращаем результат
     return result_matrix
 
 
-# комментарий
+# задаём декоратор
 @pytest.mark.parametrize('size', [2, 3, 4])
 def test_matrices_are_not_commutative_in_general(size):
-    # комментарий
+    # проходим цикл
     for _ in range(200):
-        # комментарий
+        # сохраняем значение в переменную
         matrix_a = random_matrix(size)
-        # комментарий
+        # сохраняем значение в переменную
         matrix_b = random_matrix(size)
-        # комментарий
+        # сохраняем значение в переменную
         ab_product = multiply_matrices(matrix_a, matrix_b)
-        # комментарий
+        # сохраняем значение в переменную
         ba_product = multiply_matrices(matrix_b, matrix_a)
-        # комментарий
+        # проверяем условие
         if ab_product != ba_product:
-            # комментарий
+            # выполняем действие
             return
-    # комментарий
+    # выполняем действие
     pytest.fail('could not find example where a*b is not equal to b*a')

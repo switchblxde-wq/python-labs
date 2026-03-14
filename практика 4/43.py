@@ -1,66 +1,66 @@
-# комментарий
+# подключаем модуль
 import csv
 
-# комментарий
+# сохраняем значение в переменную
 transactions_path = 'data/transactions.csv'
 
-# комментарий
+# пробуем выполнить код
 try:
-    # комментарий
+    # открываем файл
     with open(transactions_path, 'r', encoding='utf-8') as file:
-        # комментарий
+        # сохраняем значение в переменную
         reader = csv.DictReader(file)
-        # комментарий
+        # сохраняем значение в переменную
         amounts_by_customer = {}
-        # комментарий
+        # проходим цикл
         for row in reader:
-            # комментарий
+            # сохраняем значение в переменную
             customer_id = row.get('customer_id')
-            # комментарий
+            # сохраняем значение в переменную
             amount_text = row.get('amount', '0')
-            # комментарий
+            # сохраняем значение в переменную
             amount_value = float(amount_text)
-            # комментарий
+            # выполняем действие
             amounts_by_customer.setdefault(customer_id, []).append(amount_value)
 
-    # комментарий
+    # сохраняем значение в переменную
     min_customer_id = None
-    # комментарий
+    # сохраняем значение в переменную
     min_amount_value = None
 
-    # комментарий
+    # проходим цикл
     for customer_id, amounts in amounts_by_customer.items():
-        # комментарий
+        # сохраняем значение в переменную
         current_min_amount = min(amounts)
-        # комментарий
+        # проверяем условие
         if min_amount_value is None or current_min_amount < min_amount_value:
-            # комментарий
+            # сохраняем значение в переменную
             min_amount_value = current_min_amount
-            # комментарий
+            # сохраняем значение в переменную
             min_customer_id = customer_id
 
-    # комментарий
+    # сохраняем значение в переменную
     selected_amounts = amounts_by_customer[min_customer_id]
-    # комментарий
+    # сохраняем значение в переменную
     abs_amounts = [abs(value) for value in selected_amounts]
 
-    # комментарий
+    # сохраняем значение в переменную
     frequency = {}
-    # комментарий
+    # проходим цикл
     for abs_value in abs_amounts:
-        # комментарий
+        # сохраняем значение в переменную
         frequency[abs_value] = frequency.get(abs_value, 0) + 1
 
-    # комментарий
+    # сохраняем значение в переменную
     most_common_abs = max(frequency, key=frequency.get)
-    # комментарий
+    # сохраняем значение в переменную
     repeat_count = frequency[most_common_abs]
 
-    # комментарий
+    # выводим результат
     print(f'Наиболее часто встречающийся модуль суммы: {most_common_abs}')
-    # комментарий
+    # выводим результат
     print(f'Количество повторений: {repeat_count}')
 
 except FileNotFoundError:
-    # комментарий
+    # выводим результат
     print('Файл data/transactions.csv не найден, он может быть внутри data/transactions.7z')

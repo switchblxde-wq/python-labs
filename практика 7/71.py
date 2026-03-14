@@ -1,32 +1,32 @@
-# комментарий
+# подключаем модуль
 import warnings
 
 
-# комментарий
+# описываем функцию
 
 def filter_by_type(items, data_type):
-    # комментарий
+    # проверяем условие
     if not isinstance(items, list):
-        # комментарий
+        # выбрасываем исключение
         raise TypeError('First argument must be a list')
 
-    # комментарий
+    # сохраняем значение в переменную
     allowed_types = (int, str, float, bool)
-    # комментарий
+    # проверяем условие
     if data_type not in allowed_types:
-        # комментарий
+        # выбрасываем исключение
         raise TypeError(f'data_type must be one of {allowed_types}, got {data_type}')
 
-    # комментарий
+    # сохраняем значение в переменную
     other_types = [item for item in items if not isinstance(item, allowed_types)]
-    # комментарий
+    # проверяем условие
     if other_types:
-        # комментарий
+        # выполняем действие
         warnings.warn(
             f'List contains elements of types other than int, str, float, bool: {other_types}. '
             'They will be ignored in filtering.',
             UserWarning
         )
 
-    # комментарий
+    # возвращаем результат
     return [item for item in items if type(item) is data_type]
