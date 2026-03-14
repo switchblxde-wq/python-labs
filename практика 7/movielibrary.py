@@ -1,29 +1,9 @@
-class MovieLibrary:
-    """Простая библиотека фильмов."""
+from pathlib import Path  # Импортирую путь к файлу.
+import importlib.util  # Импортирую загрузку модуля по пути.
 
-    def __init__(self):
-        self.movies = []  # список фильмов, каждый фильм — словарь с ключами title, director, year
+_module_path = Path(__file__).with_name('72.py')  # Указываю файл с заданием 72.
+_spec = importlib.util.spec_from_file_location('practice7_task72', _module_path)  # Готовлю описание модуля.
+_module = importlib.util.module_from_spec(_spec)  # Создаю пустой модуль.
+_spec.loader.exec_module(_module)  # Загружаю код из файла.
 
-    def add_movie(self, title, director, year):
-        """Добавляет фильм в библиотеку."""
-        if not isinstance(title, str) or not title:
-            raise ValueError("Title must be a non-empty string")
-        if not isinstance(director, str) or not director:
-            raise ValueError("Director must be a non-empty string")
-        if not isinstance(year, int) or year < 1888:  # первый фильм снят примерно в 1888
-            raise ValueError("Year must be an integer >= 1888")
-        self.movies.append({"title": title, "director": director, "year": year})
-
-    def remove_movie(self, title):
-        """Удаляет фильм по названию. Если фильм не найден, возбуждает KeyError."""
-        for i, movie in enumerate(self.movies):
-            if movie["title"] == title:
-                del self.movies[i]
-                return
-        raise KeyError(f"Movie with title '{title}' not found")
-
-    def get_movies_by_year(self, year):
-        """Возвращает список фильмов за указанный год."""
-        if not isinstance(year, int):
-            raise TypeError("Year must be an integer")
-        return [movie for movie in self.movies if movie["year"] == year]
+MovieLibrary = _module.MovieLibrary  # Пробрасываю класс со старым именем модуля.

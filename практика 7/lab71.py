@@ -1,21 +1,9 @@
-import warnings
+from pathlib import Path  # Импортирую путь к файлу.
+import importlib.util  # Импортирую загрузку модуля по пути.
 
-def filter_by_type(items, data_type):
- 
-    if not isinstance(items, list):
-        raise TypeError("First argument must be a list")
-    allowed_types = (int, str, float, bool)
-    if data_type not in allowed_types:
-        raise TypeError(f"data_type must be one of {allowed_types}, got {data_type}")
+_module_path = Path(__file__).with_name('71.py')  # Указываю файл с заданием 71.
+_spec = importlib.util.spec_from_file_location('practice7_task71', _module_path)  # Готовлю описание модуля.
+_module = importlib.util.module_from_spec(_spec)  # Создаю пустой модуль.
+_spec.loader.exec_module(_module)  # Загружаю код из файла.
 
-    # Проверка на элементы неразрешённых типов (для предупреждения)
-    other_types = [item for item in items if not isinstance(item, allowed_types)]
-    if other_types:
-        warnings.warn(
-            f"List contains elements of types other than int, str, float, bool: {other_types}. "
-            "They will be ignored in filtering.",
-            UserWarning
-        )
-
-    # Строгая фильтрация по точному типу (чтобы отделить bool от int)
-    return [item for item in items if type(item) is data_type]
+filter_by_type = _module.filter_by_type  # Пробрасываю функцию со старым именем модуля.
